@@ -19,8 +19,9 @@ interface AnimalDao {
     @Query("SELECT * FROM animals WHERE id = :animalId LIMIT 1")
     suspend fun getAnimalById(animalId: Long): AnimalEntity?
 
+
     @Delete
-    suspend fun deleteAnimals(animals : List<AnimalEntity>)
+    suspend fun deleteAnimal(animal: AnimalEntity)
 
 
 
