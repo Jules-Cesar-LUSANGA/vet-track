@@ -10,7 +10,7 @@ import com.pixel_ninja.vet_track.data.model.AnimalEntity
 import com.pixel_ninja.vet_track.data.services.AnimalService
 import kotlinx.coroutines.launch
 
-class VetTrackViewModel (context: Context) : ViewModel()   {
+class AnimalVetTrackViewModel (context: Context) : ViewModel()   {
     private val db: VetTracDb = VetTracDb.getDatabase(context)
     private val animalService = AnimalService(db.animalDao())
 
@@ -18,13 +18,13 @@ class VetTrackViewModel (context: Context) : ViewModel()   {
     private val _animals = MutableLiveData<List<AnimalEntity>>()
     val animals: LiveData<List<AnimalEntity>> get() = _animals
 
-    fun addAnimal(animal: AnimalEntity) {
+    fun createAnimal(animal: AnimalEntity) {
         viewModelScope.launch {
             animalService.addAnimal(animal)
         }
     }
 
-    fun deleteAnimal(animal: AnimalEntity) {
+    fun deletedAnimal(animal: AnimalEntity) {
         viewModelScope.launch {
             animalService.deleteAnimal(animal)
         }

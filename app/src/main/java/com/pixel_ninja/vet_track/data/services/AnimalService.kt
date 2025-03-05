@@ -11,7 +11,6 @@ class AnimalService (private val animalDao: AnimalDao) {
     }
 
 
-
     suspend fun deleteAnimal(animal: AnimalEntity){
         animalDao.deleteAnimal(animal)
     }

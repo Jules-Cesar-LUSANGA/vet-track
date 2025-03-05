@@ -15,11 +15,10 @@ interface BirthDao {
     @Query("SELECT * FROM births ORDER BY date DESC")
     fun getBirths(): Flow<List<BirthEntity>>
 
+
+
     @Query("SELECT * FROM births WHERE id = :birthId LIMIT 1")
     suspend fun getBirthById(birthId: Long): BirthEntity?
-
-    @Delete
-    suspend fun deleteBirths(births: List<BirthEntity>)
 
     @Delete
     suspend fun deleteBirth(birth: BirthEntity)
