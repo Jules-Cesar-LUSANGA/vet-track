@@ -14,7 +14,7 @@ interface AnimalDao {
     suspend fun update(animal: AnimalEntity)
 
     @Query("SELECT * FROM animals ORDER BY date DESC")
-    fun getAnimals() : Flow<List<AnimalEntity>> // Flow is used to observe changes in the database
+    fun getAnimals() : Flow<List<AnimalEntity>>
 
     @Query("SELECT * FROM animals WHERE id = :animalId LIMIT 1")
     suspend fun getAnimalById(animalId: Long): AnimalEntity?
