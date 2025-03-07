@@ -7,22 +7,29 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-@Composable
-fun VaccinationScreen() {
-    // État pour contrôler l'affichage du popup
-    var showPopup by remember { mutableStateOf(false) }
+import com.pixel_ninja.vet_track.data.model.VaccinationEntity
+import com.pixel_ninja.vet_track.viewModel.VaccinationViewModel
 
-    // État pour les champs du formulaire
+@Composable
+fun VaccinationScreen(viewModel: VaccinationViewModel) {
+    val vaccinations by viewModel.vaccins.observeAsState(emptyList())
+
+    var showPopup by remember { mutableStateOf(false) }
     var vaccinationName by remember { mutableStateOf("") }
     var vaccinationDescription by remember { mutableStateOf("") }
 
+    LaunchedEffect(Unit) {
+        viewModel.getAllsVaccination() // Charger les données au démarrage
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // Liste des vaccinations
+        // Liste des vaccinations dynamiques
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,14 +82,12 @@ fun VaccinationScreen() {
             confirmButton = {
                 Button(
                     onClick = {
-                        // Ajouter la vaccination à la liste
-                        val newVaccination = Vaccination(
-                            id = vaccinations.size + 1, // Générer un nouvel ID
+                        val newVaccination = VaccinationEntity(
                             name = vaccinationName,
                             description = vaccinationDescription
                         )
-                        vaccinations.add(newVaccination) // Ajouter à la liste
-                        showPopup = false // Fermer le popup
+                        viewModel.createVaccination(newVaccination) // Sauvegarde dans la BDD
+                        showPopup = false
                     }
                 ) {
                     Text("Enregistrer")
@@ -99,27 +104,8 @@ fun VaccinationScreen() {
     }
 }
 
-data class Vaccination(
-    val id: Int,
-    val name: String,
-    val description: String
-)
-
-val vaccinations = mutableListOf(
-    Vaccination(
-        id = 1,
-        name = "Vaccin contre la grippe",
-        description = "Protège contre les souches courantes de la grippe."
-    ),
-    Vaccination(
-        id = 2,
-        name = "Vaccin contre la rage",
-        description = "Nécessaire pour les animaux exposés à la rage."
-    )
-)
-
 @Composable
-fun VaccinationCard(vaccination: Vaccination) {
+fun VaccinationCard(vaccination: VaccinationEntity) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,7 +115,6 @@ fun VaccinationCard(vaccination: Vaccination) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Nom de la vaccination
             Text(
                 text = vaccination.name,
                 style = MaterialTheme.typography.headlineSmall,
@@ -137,7 +122,6 @@ fun VaccinationCard(vaccination: Vaccination) {
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Description de la vaccination
             Text(
                 text = vaccination.description,
                 style = MaterialTheme.typography.bodyMedium

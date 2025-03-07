@@ -5,14 +5,12 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 
-@Entity(tableName = "births", indices = [Index(value = ["matherId", "fatherId"])])
+@Entity(tableName = "births")
 data class BirthEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val matherId: Long,
-    val fatherId: Long,
-    val birthDay: LocalDate,
-    val nbrWeight: Int,
-    val date: LocalDate,
-
+    val animalName: String,  // Nom de l'animal
+    val birthDate: LocalDate, // Date de naissance
+    val description: String   // Description
 )
+

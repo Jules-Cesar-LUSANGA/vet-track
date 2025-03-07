@@ -1,6 +1,7 @@
 package com.pixel_ninja.vet_track.viewModel
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,41 +13,40 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class saleViewModel (context: Context) : ViewModel() {
+class SaleViewModel(context: Context) : ViewModel() {
     private val db = VetTracDb.getDatabase(context)
     private val saleService = SaleService(db.saleDao())
 
     private val _sales = MutableLiveData<List<SaleEntity>>()
-     val sales : MutableLiveData<List<SaleEntity>> get() = _sales
+    val sales: LiveData<List<SaleEntity>> get() = _sales
 
-    private val _sale = MutableLiveData<SaleEntity ?> ()
-    val sale : MutableLiveData<SaleEntity ?> get() = _sale
+    private val _sale = MutableLiveData<SaleEntity?>()
+    val sale: LiveData<SaleEntity?> get() = _sale
 
-    fun createSale(sale : SaleEntity){
+    fun createSale(sale: SaleEntity) {
         viewModelScope.launch {
             saleService.addSale(sale)
+            getAllSales() // Rafraîchir la liste après l'ajout
         }
     }
 
-    fun deletedSale(sale : SaleEntity){
+    fun getAllSales() {
+        viewModelScope.launch {
+            saleService.getAllSales().collect {
+                _sales.value = it
+            }
+        }
+    }
+
+    fun deleteSale(sale: SaleEntity) {
         viewModelScope.launch {
             saleService.deleteSale(sale)
         }
     }
 
-   fun getAllSales()  {
-       viewModelScope.launch {
-           saleService.getAllSales().collect{
-               _sales.value = it
-           }
-       }
-   }
-
-    fun getOneSale(saleId : Long) {
+    fun getSaleById(saleId: Long) {
         viewModelScope.launch {
-            val result = withContext(Dispatchers.IO){
-                saleService.getSaleById(saleId)
-            }
+            val result = saleService.getSaleById(saleId)
             _sale.postValue(result)
         }
     }

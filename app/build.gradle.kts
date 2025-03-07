@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation ("org.jetbrains:annotations:23.0.0")
     implementation("androidx.navigation:navigation-compose:2.7.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation(libs.androidx.core.ktx)
@@ -64,6 +65,8 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.room.compiler)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.places)
 
 
     testImplementation(libs.junit)
@@ -75,4 +78,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
+
+}
+
+configurations.all {
+    resolutionStrategy {
+        force ("com.intellij:annotations:12.0")
+    }
 }

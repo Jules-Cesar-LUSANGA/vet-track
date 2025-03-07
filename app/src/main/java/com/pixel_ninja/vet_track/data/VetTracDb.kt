@@ -14,6 +14,7 @@ import com.pixel_ninja.vet_track.data.model.BirthEntity
 import com.pixel_ninja.vet_track.data.model.CareEntity
 import com.pixel_ninja.vet_track.data.model.SaleEntity
 import com.pixel_ninja.vet_track.data.Converters
+import com.pixel_ninja.vet_track.data.dao.VaccinationDao
 
 @Database(
     entities = [AnimalEntity::class, BirthEntity::class, CareEntity::class, SaleEntity::class],
@@ -27,6 +28,7 @@ abstract class VetTracDb : RoomDatabase() {
     abstract fun birthDao(): BirthDao
     abstract fun careDao(): CareDao
     abstract fun saleDao(): SaleDao
+    abstract fun vaccinationDao() : VaccinationDao
 
     companion object {
         @Volatile

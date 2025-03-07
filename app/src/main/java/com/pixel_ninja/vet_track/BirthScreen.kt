@@ -15,23 +15,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.libraries.places.api.model.LocalDate
-import com.pixel_ninja.vet_track.data.model.CareEntity
-import com.pixel_ninja.vet_track.viewModel.CareViewModel
-
+import com.pixel_ninja.vet_track.data.model.BirthEntity
+import com.pixel_ninja.vet_track.viewModel.BirthTrackViewModel
+import java.time.LocalDate
 
 @Composable
-fun SoinScreen(viewModel: CareViewModel = viewModel()) {
+fun BirthScreen(viewModel: BirthTrackViewModel = viewModel()) {
     var showPopup by remember { mutableStateOf(false) }
-    var soinDescription by remember { mutableStateOf("") }
-    var soinType by remember { mutableStateOf("") }
+    var animalName by remember { mutableStateOf("") }
+    var birthDate by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
 
-    // Observer les changements de la liste de soins
-    val cares by viewModel.cares.observeAsState(emptyList())
+    // Observer les changements de la liste des naissances
+    val births by viewModel.births.observeAsState(emptyList())
 
-    // Charger les soins au démarrage
+    // Charger les naissances au démarrage
     LaunchedEffect(Unit) {
-        viewModel.getAllCare()
+        viewModel.getAllBirths()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -40,8 +40,8 @@ fun SoinScreen(viewModel: CareViewModel = viewModel()) {
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            items(cares) { soin ->
-                SoinCard(soin = soin, onDelete = { viewModel.deletedCare(soin) })
+            items(births) { birth ->
+                BirthCard(birth = birth, onDelete = { viewModel.deleteBirth(birth) })
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -55,29 +55,36 @@ fun SoinScreen(viewModel: CareViewModel = viewModel()) {
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Ajouter un soin",
+                contentDescription = "Ajouter une naissance",
                 tint = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
 
-    // Pop-up pour ajouter un soin
+    // Pop-up pour ajouter une naissance
     if (showPopup) {
         AlertDialog(
             onDismissRequest = { showPopup = false },
-            title = { Text("Ajouter un soin") },
+            title = { Text("Ajouter une naissance") },
             text = {
                 Column {
                     TextField(
-                        value = soinType,
-                        onValueChange = { soinType = it },
-                        label = { Text("Type de soin") },
+                        value = animalName,
+                        onValueChange = { animalName = it },
+                        label = { Text("Nom de l'animal") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     TextField(
-                        value = soinDescription,
-                        onValueChange = { soinDescription = it },
+                        value = birthDate,
+                        onValueChange = { birthDate = it },
+                        label = { Text("Date de naissance") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextField(
+                        value = description,
+                        onValueChange = { description = it },
                         label = { Text("Description") },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -86,15 +93,15 @@ fun SoinScreen(viewModel: CareViewModel = viewModel()) {
             confirmButton = {
                 Button(
                     onClick = {
-                        val newSoin = CareEntity(
-                            animalId = 1,  // Remplacez par l'ID de l'animal approprié
-                            date = java.time.LocalDate.now(),  // Vous pouvez définir la date actuelle ou une autre valeur
-                            type = soinType,
-                            description = soinDescription
+                        val newBirth = BirthEntity(
+                            animalName = animalName,
+                            birthDate = LocalDate.parse(birthDate),  // Conversion de la date
+                            description = description
                         )
-                        viewModel.createCare(newSoin)  // Appeler la fonction du ViewModel pour ajouter le soin
-                        soinDescription = ""  // Réinitialiser les champs
-                        soinType = ""
+                        viewModel.createBirth(newBirth)  // Appeler la fonction du ViewModel pour ajouter la naissance
+                        animalName = ""  // Réinitialiser les champs
+                        birthDate = ""
+                        description = ""
                         showPopup = false
                     }
                 ) {
@@ -110,9 +117,8 @@ fun SoinScreen(viewModel: CareViewModel = viewModel()) {
     }
 }
 
-
 @Composable
-fun SoinCard(soin: CareEntity, onDelete: () -> Unit) {
+fun BirthCard(birth: BirthEntity, onDelete: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,13 +129,13 @@ fun SoinCard(soin: CareEntity, onDelete: () -> Unit) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = soin.type,
+                text = "Naissance de ${birth.animalName} - ${birth.birthDate}",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = soin.description,
+                text = "Description: ${birth.description}",
                 style = MaterialTheme.typography.bodyMedium
             )
 

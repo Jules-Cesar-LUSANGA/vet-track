@@ -18,6 +18,10 @@ class AnimalVetTrackViewModel (context: Context) : ViewModel()   {
     private val _animals = MutableLiveData<List<AnimalEntity>>()
     val animals: LiveData<List<AnimalEntity>> get() = _animals
 
+    fun setAnimals(animalList: List<AnimalEntity>) {
+        _animals.value = animalList
+    }
+
     fun createAnimal(animal: AnimalEntity) {
         viewModelScope.launch {
             animalService.addAnimal(animal)
